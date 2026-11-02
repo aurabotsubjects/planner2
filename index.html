@@ -15403,6 +15403,40 @@ a.tab:hover{background:#fff}
 a.tab:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--line)}
 a.tab:focus-visible{outline:3px solid var(--blu);outline-offset:2px}
 
+/* Classes */
+.cls-tabs{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+.cls-tabs button.on{background:var(--acc);box-shadow:0 0 0 var(--line);transform:translate(2px,2px)}
+.stu{background:#fffefa;border:2px solid var(--line);border-radius:8px 5px 9px 6px/6px 9px 5px 8px;margin-bottom:7px;box-shadow:2px 2px 0 var(--shadow)}
+.stu-h{display:flex;gap:8px;align-items:center;padding:3px 8px}
+.stu-n{flex:1;min-width:0;text-align:left;border:0;box-shadow:none;background:none;padding:2px 0;font-size:1.05rem;display:flex;gap:8px;align-items:center}
+.stu-n:hover,.stu-n:active{background:none;transform:none;box-shadow:none}
+.stu-n .cnt{font-size:13px;opacity:.65}
+.stu-n .arr{font-size:11px;opacity:.6;transition:transform .2s}
+.stu.open .stu-n .arr{transform:rotate(180deg)}
+.stu-b{border-top:1.5px dashed rgba(59,54,86,.35);padding:6px 10px 8px;margin:0 4px}
+.snote{display:flex;gap:6px;align-items:flex-start;border-bottom:1.5px dashed rgba(59,54,86,.25);padding:3px 0;font-size:16px}
+.snote .tx{flex:1;white-space:pre-wrap;min-width:0;overflow-wrap:anywhere}
+.snote .dt{font-size:12.5px;opacity:.65;display:block}
+.snote button,.stu-h .xb{border:0;box-shadow:none;background:none;padding:0 4px;opacity:.5;font-size:15px}
+.snote button:hover,.stu-h .xb:hover{opacity:1;background:none}
+.stu-b textarea{min-height:64px;background:rgba(255,255,255,.8);border:1.5px solid var(--line);border-radius:7px;padding:4px 8px;line-height:1.3;font-size:16px;margin-top:6px}
+
+#stuModal .card{max-width:760px}
+.sm-sec{border-top:2px dashed rgba(59,54,86,.35);margin-top:12px;padding-top:6px}
+.sm-sec h4{font-family:'Caveat',cursive;font-size:1.5rem;margin:0 0 4px;font-weight:700}
+#stuModal textarea{min-height:70px;background:rgba(255,255,255,.8);border:1.5px solid var(--line);border-radius:7px;padding:4px 8px;line-height:1.3;font-size:16px}
+.chk-top{display:flex;justify-content:space-between;align-items:center;margin:8px 0 4px}
+.chk-strand{margin-bottom:8px}
+.chk-sh{font-weight:700;border-bottom:1.5px solid rgba(59,54,86,.35);margin-bottom:2px}
+.chk{display:flex;gap:8px;align-items:flex-start;padding:3px 4px;border-radius:6px;cursor:pointer;line-height:1.3;font-size:16px}
+.chk:hover{background:rgba(155,188,255,.18)}
+.chk input{width:20px;height:20px;margin:1px 0 0;flex-shrink:0;accent-color:#3b9b6b}
+.prog{display:flex;gap:8px;align-items:center;width:100%;margin-bottom:5px;text-align:left;padding:2px 8px;font-size:15px}
+.prog .pn{width:11rem;flex-shrink:0}
+.prog .pbar{flex:1;height:12px;border:1.5px solid var(--line);border-radius:7px;background:#fff;overflow:hidden}
+.prog .pbar i{display:block;height:100%;background:#7fdca0}
+.prog .pv{width:3.2rem;text-align:right;font-size:14px}
+
 @media(max-width:860px){.home{grid-template-columns:1fr}.board{grid-template-columns:1fr}td.lab{width:64px}}
 @media print{
  .clockbox{display:none!important}
@@ -15427,7 +15461,7 @@ a.tab:focus-visible{outline:3px solid var(--blu);outline-offset:2px}
 <div class="home" id="home">
 <div class="left">
  <section class="card yel" id="todayCard"></section>
- <section class="card grid"><h2>Timetable</h2><div style="overflow-x:auto" id="tt"></div><p class="small" style="margin:6px 0 0">Click any box to type. Today’s column is highlighted.</p></section>
+ <section class="card grid" id="classCard"></section>
  <section class="card"><h2>Tasks</h2>
   <div class="row" style="margin-bottom:10px"><input id="nt" placeholder="New task, e.g. Mark Year 5 maths" style="flex:1;min-width:160px"><select id="ntag"></select><button class="pri" data-a="add">Add task</button></div>
   <div class="board" id="board"></div><p class="small" style="margin:4px 0 0">Click a task to move it along. ✕ removes it.</p></section>
@@ -15476,6 +15510,7 @@ a.tab:focus-visible{outline:3px solid var(--blu);outline-offset:2px}
  <label class="fl" for="sfn">Name your template file</label><input type="text" id="sfn" placeholder="e.g. Regular week">
  <div class="row" style="justify-content:flex-end;margin-top:14px"><button data-a="s-close">Cancel</button><button class="pri" data-a="s-ok">Save</button></div>
 </div></div>
+<div class="ov noprint" id="stuModal" hidden><div class="card" role="dialog" aria-modal="true" aria-labelledby="stuTitle"><div id="stuBody"></div></div></div>
 <div class="toast noprint" id="toast" role="status" hidden></div>
 
 <script>
@@ -15723,7 +15758,7 @@ function copyTable(){
 function setView(v){S.view=v;$('#home').hidden=v!=='home';$('#week').hidden=v!=='week';
  $('#tab-home').setAttribute('aria-selected',v==='home');$('#tab-week').setAttribute('aria-selected',v==='week');save();if(v==='week')renderBoard()}
 const A={
-lopen:e=>toggleLesson(e.dataset.id),'n-save':saveNote,'n-new':newNote,'n-open':e=>openNote(e.dataset.id),'n-del':e=>delNote(e.dataset.id),'clk-mode':e=>setClkMode(e.dataset.v),'clk-go':clkGo,'clk-reset':clkReset,
+'c-sel':e=>{S.curClass=e.dataset.id;openStu=composeStu=null;save();classCard()},'c-add':addClass,'c-del':delClass,'s-add':addStudent,'s-del':e=>delStudent(e.dataset.id),'s-prof':e=>openStuModal(e.dataset.id),'sn-add':e=>openStuModal(e.dataset.id,'note'),'s-check':e=>openStuModal(e.dataset.id,'check'),'sm-close':closeStuModal,'sm-note':saveModalNote,'sm-notedel':e=>{if(!confirm('Delete this note?'))return;const st=stuOf(mStu);st.notes=st.notes.filter(n=>n.id!==e.dataset.n);save();smNotes()},'sm-clear':()=>{const st=stuOf(mStu),c=CURRIC.find(x=>x.id===mCur);if(!st||!c||!confirm('Clear every tick on '+c.name+' for '+st.name+'?'))return;Object.keys(st.checks||{}).filter(k=>k.startsWith(c.id+':')).forEach(k=>delete st.checks[k]);save();smCheck();smProg()},'sm-goto':e=>{mCur=e.dataset.id;$('#smCur').value=mCur;smCheck();$('#smCur').scrollIntoView({block:'start'})},
 add:addTask,aev:addEv,view:e=>setView(e.dataset.v),
 mv:e=>{const t=S.tasks.find(t=>t.id==e.dataset.id);t.c=(t.c+1)%3;save();board()},
 del:e=>{S.tasks=S.tasks.filter(t=>t.id!=e.dataset.id);save();board()},
@@ -15837,8 +15872,88 @@ function clkReset(){
 document.addEventListener('input',ev=>{if(ev.target.id==='cdMin'&&!CK.cd.run){const v=Math.max(1,Math.min(600,+ev.target.value||1));CK.cd.min=v;CK.cd.left=v*6e4;CK.cd.done=false;clkTick()}});
 setInterval(clkTick,100);
 
+
+/* ---------- NZ Curriculum checklists (Years 5 and 6): refreshed NZ Curriculum, Phase 2 (Years 4-6) ---------- */
+const CURRIC=[
+{id:'m5',sub:'Maths',name:'Maths · Year 5',strands:[
+ {n:'Number and algebra',items:['Read, write, compare and order whole numbers up to 100 000 using place value','Identify factors of numbers up to 100','Round whole numbers and tenths; use estimation and inverse operations to check answers','Add, subtract, multiply and divide whole numbers mentally and in writing, including division with remainders','Recall multiplication facts to 10 × 10 and the related division facts','Represent, compare and order tenths and hundredths as fractions and decimals','Compare and order fractions with common denominators, find equivalent fractions, convert improper fractions and mixed numbers','Add and subtract fractions with the same denominator, and decimals to two places','Represent and calculate money amounts, including totals and change','Write and solve number sentences using all four operations','Describe growing patterns using tables and words, and predict later terms','Create and follow algorithms for patterns, procedures and pathways']},
+ {n:'Geometry and measurement',items:['Estimate and measure length, mass, capacity, temperature and duration using metric or time units','Choose appropriate tools and units for each measurement','Convert between mm, cm, m, km, mL and L','Classify angles as acute, right, obtuse, straight or reflex','Solve duration problems, including am/pm times','Calculate perimeter, area (squares and half squares) and volume (centicubes)','Identify and describe regular and irregular polygons, prisms, parallel and perpendicular lines','Connect 3D shapes with nets, diagrams and different viewpoints','Resize 2D shapes by enlarging or reducing them','Create and interpret grid maps using grid references, compass points and simple scales']},
+ {n:'Statistics',items:['Pose investigative questions that can be answered with data, and make predictions','Plan primary data collection (group of interest, variables, ethical considerations)','Collect data, check for errors and re-collect where needed','Create and describe data displays (tables, pictographs, line, bar, strip, pie, dot plot, stem-and-leaf), naming variables and groups','Answer investigative questions by comparing findings with predictions','Evaluate data displays']}]},
+{id:'m6',sub:'Maths',name:'Maths · Year 6',strands:[
+ {n:'Number and algebra',items:['Read, write, compare and order whole numbers up to 1 000 000','Identify square numbers and factors of numbers up to 125','Round whole numbers to powers of 10, and round tenths and hundredths','Use estimation and inverse operations to check calculations','Add and subtract any whole numbers; multiply multi-digit numbers; divide four-digit numbers by one-digit numbers with remainders','Recall multiplication and division facts to 10 × 10','Apply the order of operations (grouping, ×, ÷, +, −)','Identify, compare, order and convert fractions, decimals (to two places) and percentages, including simplest form','Multiply and divide whole numbers and decimals by 10 and 100','Find a fraction or percentage of a whole number, and identify a whole from a part','Add and subtract fractions and mixed numbers with the same or related denominators','Add and subtract whole numbers and decimals to two places','Calculate 10%, 25% and 50% of whole dollar amounts','Plan purchases and simple budgets','Write true or false number sentences using equality and inequality','Use tables, XY graphs and diagrams to identify linear patterns with constant change, and make predictions','Create algorithms and flowcharts for making decisions']},
+ {n:'Geometry and measurement',items:['Estimate and measure length, mass, capacity, temperature and duration in appropriate units (including tonnes and Celsius)','Select appropriate tools and units for each measurement','Convert between common metric units for length, mass and capacity, using decimals','Measure and draw angles up to 360° to the nearest degree','Convert between time units and solve duration problems using 12- and 24-hour time','Calculate area of rectangles and right-angled triangles (cm² and m²) and volume of rectangular prisms (cm³)','Classify and compare 2D shapes (including triangle types), prisms and pyramids','Describe interior angles of triangles and quadrilaterals','Draw nets of rectangular prisms','Create and describe tessellations and patterns using rotation, reflection and translation; identify what stays the same','Interpret and create grid references and simple map scales','Describe locations and pathways using compass points, turns in degrees, and distances in m and km']},
+ {n:'Statistics',items:['Pose investigative questions about summary, comparison and time-series data, and make predictions','Plan primary data collection, or evaluate provided data by checking its source, purpose and possible bias','Collect data, check for errors, and describe variables in secondary data','Create and describe a range of displays, including histograms, side-by-side and back-to-back graphs, and percentage-based pie and strip graphs','Find the mean and mode of data sets','Identify features, patterns and trends in context, and answer investigative questions','Interpret two-way tables and bivariate data','Identify misleading information in data displays and check others’ statistical claims']}]},
+{id:'r5',sub:'English',name:'Reading · Year 5',strands:[{n:'Reading',items:['Read year-level texts accurately and expressively at the Year 5 oral fluency rate','Use morphology to work out words with more than one affix','Summarise the central theme and key details, then draw a conclusion','Make inferences from explicit and implicit evidence','Explain how language and visual choices show perspectives']}]},
+{id:'r6',sub:'English',name:'Reading · Year 6',strands:[{n:'Reading',items:['Read year-level texts accurately and expressively at the Year 6 oral fluency rate','Independently work out challenging words using morphology','Summarise how the theme develops through key details, then draw a supported conclusion','Justify inferences and compare them with others’ interpretations','Explain how groups of people are portrayed and which perspectives are included or left out']}]},
+{id:'w5',sub:'English',name:'Writing · Year 5',strands:[{n:'Writing',items:['Handwrite longer texts with ease and automaticity','Combine sentences orally and expand them with adverbial phrases and appositives','Write entertaining texts with sensory details and dialogue','Write persuasive texts in two or more paragraphs with facts and details','Use simile, metaphor and personification deliberately','Write multi-paragraph non-fiction with an introduction, sub-topics and a conclusion']}]},
+{id:'w6',sub:'English',name:'Writing · Year 6',strands:[{n:'Writing',items:['Handwrite with automaticity across multiple purposes during the school day','Choose and rearrange sentence structures for effect','Expand sentences with adjectival phrases','Write entertaining texts that shift in time and setting and end with clear closure','Write persuasive texts in three or more paragraphs, strongest to weakest point, using emotive language','Use imagery, alliteration and idioms','Revise at word, sentence and whole-text levels with purpose and audience in mind']}]},
+{id:'o5',sub:'English',name:'Oral language · Year 5',strands:[{n:'Oral language',items:['Plan and adapt a presentation for a specific audience and setting','Support points with evidence, such as a cited text or a historical event']}]},
+{id:'o6',sub:'English',name:'Oral language · Year 6',strands:[{n:'Oral language',items:['Build a detailed argument or narrative','Present counter-arguments and assess different viewpoints','Use direct quotes or citations to support a view']}]}
+];
+const curKey=(c,si,ii)=>c.id+':'+si+':'+ii;
+const curTotal=c=>c.strands.reduce((n,x)=>n+x.items.length,0);
+const curDone=(st,c)=>{const k=st.checks||{};let n=0;c.strands.forEach((x,si)=>x.items.forEach((_,ii)=>{if(k[curKey(c,si,ii)])n++}));return n};
+
+/* ---------- Classes, students and student notes ---------- */
+S.classes=Array.isArray(S.classes)?S.classes:[];
+let mStu=null,mCur='m5';
+const curCls=()=>{if(!Array.isArray(S.classes))S.classes=[];return S.classes.find(c=>c.id===S.curClass)||S.classes[0]||null};
+const stuWhen=ts=>new Date(ts).toLocaleString('en-NZ',{weekday:'short',day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
+const stuOf=id=>{for(const c of S.classes){const x=c.students.find(y=>y.id===id);if(x)return x}return null};
+const stuClass=id=>S.classes.find(c=>c.students.some(y=>y.id===id));
+const ticks=st=>Object.values(st.checks||{}).filter(Boolean).length;
+function classCard(){const el=$('#classCard');if(!el)return;const c=curCls();if(c)S.curClass=c.id;
+ let h=`<h2>Classes</h2><div class="cls-tabs">${S.classes.map(x=>`<button data-a="c-sel" data-id="${esc(x.id)}" class="${c&&x.id===c.id?'on':''}">${esc(x.name)}</button>`).join('')}</div>
+ <div class="row" style="margin-bottom:8px"><input id="ncls" placeholder="New class, e.g. Room 12" style="flex:1;min-width:140px" aria-label="New class name"><button class="pri" data-a="c-add">Add class</button></div>`;
+ if(!c)h+='<p class="small">No classes yet. Add one above, then add your students.</p>';
+ else{h+=`<div class="row" style="justify-content:space-between;margin-bottom:8px"><b style="font-size:1.15rem">${esc(c.name)} <span class="small">· ${c.students.length} student${c.students.length===1?'':'s'}</span></b><button class="mini" data-a="c-del">Delete class</button></div>
+ <div class="row" style="margin-bottom:10px"><input id="nstu" placeholder="Add a student's name" style="flex:1;min-width:140px" aria-label="New student name"><button class="pri" data-a="s-add">Add student</button></div>`;
+  h+=c.students.length?c.students.map(st=>{const nn=(st.notes||[]).length,tk=ticks(st);
+   return`<div class="stu"><div class="stu-h"><button class="stu-n" data-a="s-prof" data-id="${esc(st.id)}" title="Open ${esc(st.name)}'s page"><b>${esc(st.name)}</b><span class="cnt">${nn} note${nn===1?'':'s'}${tk?' · '+tk+' ticked':''}</span></button><button class="mini pri" data-a="sn-add" data-id="${esc(st.id)}">+ Note</button><button class="mini" data-a="s-check" data-id="${esc(st.id)}">✔ Checklist</button><button class="xb" data-a="s-del" data-id="${esc(st.id)}" aria-label="Delete ${esc(st.name)}" title="Delete student">✕</button></div></div>`}).join(''):'<p class="small">No students in this class yet.</p>'}
+ el.innerHTML=h}
+function addClass(){const i=$('#ncls'),v=i.value.trim();if(!v){i.focus();return}
+ const c={id:uid(),name:v,students:[]};S.classes.push(c);S.curClass=c.id;save();classCard();$('#nstu')?.focus()}
+function delClass(){const c=curCls();if(!c)return;
+ if(!confirm(`Delete the class "${c.name}", all its students and their notes? This can't be undone.`))return;
+ S.classes=S.classes.filter(x=>x.id!==c.id);S.curClass=S.classes[0]?.id||null;save();classCard()}
+function addStudent(){const c=curCls(),i=$('#nstu'),v=i.value.trim();if(!c)return;if(!v){i.focus();return}
+ c.students.push({id:uid(),name:v,notes:[],checks:{}});save();classCard();$('#nstu').focus()}
+function delStudent(id){const st=stuOf(id);if(!st)return;
+ if(!confirm(`Delete ${st.name} and all their notes and checklists? This can't be undone.`))return;
+ const c=stuClass(id);c.students=c.students.filter(x=>x.id!==id);save();classCard()}
+
+/* Student pop-up page */
+function openStuModal(id,focus){const st=stuOf(id);if(!st)return;mStu=id;
+ $('#stuBody').innerHTML=`<div class="row" style="justify-content:space-between;flex-wrap:nowrap"><h3 id="stuTitle" style="margin:0">${esc(st.name)}</h3><button data-a="sm-close">Close ✕</button></div><div class="small" style="margin-bottom:6px">Class: ${esc(stuClass(id)?.name||'')}</div>
+ <div class="sm-sec"><h4>Notes</h4><textarea id="smTxt" placeholder="Write a note about ${esc(st.name)}…" aria-label="New note"></textarea><div class="row" style="margin:6px 0"><button class="pri" data-a="sm-note">+ Save note</button><span class="small">Ctrl+Enter also saves</span></div><div id="smNotes"></div></div>
+ <div class="sm-sec"><h4>Curriculum checklist</h4><div class="row"><select id="smCur" aria-label="Choose curriculum" style="flex:1;min-width:180px">${['Maths','English'].map(g=>`<optgroup label="${g}">${CURRIC.filter(c=>c.sub===g).map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</optgroup>`).join('')}</select></div><div id="smCheck"></div></div>
+ <div class="sm-sec"><h4>Progress overview</h4><div id="smProg"></div></div>`;
+ $('#smCur').value=mCur;smNotes();smCheck();smProg();$('#stuModal').hidden=false;
+ if(focus==='note')$('#smTxt').focus();else if(focus==='check')$('#smCur').scrollIntoView({block:'start'});
+ else $('#stuModal .card').scrollTop=0}
+function closeStuModal(){$('#stuModal').hidden=true;mStu=null;classCard()}
+function smNotes(){const st=stuOf(mStu),el=$('#smNotes');if(!st||!el)return;const L=(st.notes||[]).slice().sort((a,b)=>b.ts-a.ts);
+ el.innerHTML=L.length?L.map(n=>`<div class="snote"><div class="tx">${esc(n.text)}<span class="dt">${esc(stuWhen(n.ts))}</span></div><button data-a="sm-notedel" data-n="${esc(n.id)}" aria-label="Delete note" title="Delete note">✕</button></div>`).join(''):'<div class="small">No notes for this student yet.</div>'}
+function smCheck(){const st=stuOf(mStu),c=CURRIC.find(x=>x.id===mCur),el=$('#smCheck');if(!st||!c||!el)return;const k=st.checks||{};
+ el.innerHTML=`<div class="chk-top"><span id="smCnt"></span><button class="mini" data-a="sm-clear">Clear this checklist</button></div>`+c.strands.map((x,si)=>`<div class="chk-strand"><div class="chk-sh">${esc(x.n)} <span class="small" data-sc="${si}"></span></div>${x.items.map((t,ii)=>{const key=curKey(c,si,ii);return`<label class="chk"><input type="checkbox" data-ch="chk" data-k="${key}"${k[key]?' checked':''}><span>${esc(t)}</span></label>`}).join('')}</div>`).join('');smCounts()}
+function smCounts(){const st=stuOf(mStu),c=CURRIC.find(x=>x.id===mCur);if(!st||!c)return;const k=st.checks||{};
+ const d=curDone(st,c),t=curTotal(c);const e=$('#smCnt');if(e)e.innerHTML=`<b>${d} of ${t}</b> achieved`;
+ c.strands.forEach((x,si)=>{const n=x.items.filter((_,ii)=>k[curKey(c,si,ii)]).length,el=document.querySelector(`[data-sc="${si}"]`);if(el)el.textContent=`(${n}/${x.items.length})`})}
+function smProg(){const st=stuOf(mStu),el=$('#smProg');if(!st||!el)return;
+ el.innerHTML=CURRIC.map(c=>{const d=curDone(st,c),t=curTotal(c),pc=Math.round(d/t*100);return`<button class="prog" data-a="sm-goto" data-id="${c.id}"><span class="pn">${esc(c.name)}</span><span class="pbar"><i style="width:${pc}%"></i></span><span class="pv">${d}/${t}</span></button>`}).join('')}
+function saveModalNote(){const st=stuOf(mStu),t=$('#smTxt');if(!st||!t)return;const v=t.value.trim();if(!v){t.focus();return}
+ (st.notes=st.notes||[]).push({id:uid(),text:v,ts:Date.now()});t.value='';save();smNotes();toast('Note saved.')}
+document.addEventListener('change',ev=>{const t=ev.target;
+ if(t.id==='smCur'){mCur=t.value;smCheck()}
+ else if(t.dataset?.ch==='chk'){const st=stuOf(mStu);if(!st)return;st.checks=st.checks||{};if(t.checked)st.checks[t.dataset.k]=true;else delete st.checks[t.dataset.k];save();smCounts();smProg()}});
+document.addEventListener('keydown',ev=>{const t=ev.target;
+ if(ev.key==='Enter'&&t.id==='ncls')addClass();else if(ev.key==='Enter'&&t.id==='nstu')addStudent();
+ else if(ev.key==='Enter'&&(ev.ctrlKey||ev.metaKey)&&t.id==='smTxt')saveModalNote();
+ else if(ev.key==='Escape'&&mStu){mStu=null;classCard()}});
+$('#stuModal').addEventListener('click',ev=>{if(ev.target.id==='stuModal')closeStuModal()});
+
 function init(){document.documentElement.style.setProperty('--acc',S.acc);$('#ntag').innerHTML=Object.keys(TAGS).map(t=>`<option>${t}</option>`).join('');$('#notes').value=S.notes;
  $('#wkGrid').style.gridTemplateRows=`repeat(${TOTAL},2px)`;
- head();clkBuild();tt();board();cal();rep();todayCard();notesList();setView(S.view==='week'?'week':'home');renderBoard()}
+ head();clkBuild();classCard();board();cal();rep();todayCard();notesList();setView(S.view==='week'?'week':'home');renderBoard()}
 init();
 </script></body></html>
