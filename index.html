@@ -15360,8 +15360,52 @@ textarea.det:focus{background:#fff;border-color:var(--blu)}
 .prev{font-size:14.5px;line-height:1.35;background:rgba(255,255,255,.7);border:1.5px dashed rgba(59,54,86,.4);border-radius:8px;padding:6px 9px;min-height:48px;white-space:pre-wrap;max-height:180px;overflow:auto}
 .toast{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:16px;background:var(--ink);color:#fff;padding:8px 16px;border-radius:10px 5px 11px 6px/6px 11px 5px 10px;z-index:300;box-shadow:3px 3px 0 var(--shadow)}
 
+/* Lesson accordion */
+.lrow.acc{display:block;padding:0;cursor:pointer;transition:box-shadow .15s}
+.lrow.acc:hover{box-shadow:2px 2px 0 var(--shadow)}
+.lrow.acc.open{box-shadow:3px 3px 0 var(--shadow);border-color:var(--line)}
+.lhead{display:flex;gap:8px;align-items:baseline;padding:2px 8px;width:100%;background:none;border:0;box-shadow:none;border-radius:inherit;text-align:left;font:inherit}
+.lhead:hover,.lhead:active{background:none;transform:none;box-shadow:none}
+.lhead .lb{flex:1}
+.lhead .arr{margin-left:auto;font-size:12px;opacity:.6;transition:transform .2s;flex-shrink:0}
+.lrow.open .arr{transform:rotate(180deg)}
+.lrow.open .lhead .lb{white-space:normal}
+.lsum{padding:4px 10px 8px;font-size:15.5px;line-height:1.4;border-top:1.5px dashed rgba(59,54,86,.35);margin:0 6px;white-space:pre-wrap;cursor:default}
+.lsum .lt{font-weight:700}
+.lsum.none{opacity:.7;font-style:italic}
+/* Clock */
+.clockbox{display:flex;align-items:stretch;gap:10px;background:rgba(255,255,255,.55);border:2px solid var(--line);border-radius:12px 6px 13px 7px/7px 13px 6px 12px;padding:6px 10px}
+.clk-main{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:9.5rem}
+.clk-time{font-family:'Courier New',ui-monospace,monospace;font-weight:700;font-size:2.1rem;line-height:1.05;letter-spacing:1px;font-variant-numeric:tabular-nums}
+.clk-time.done{animation:flash .6s steps(2) infinite;color:#e0603a}
+@keyframes flash{50%{opacity:.25}}
+.clk-sub{font-size:13px;opacity:.7}
+.clk-side{display:flex;flex-direction:column;gap:4px;justify-content:center}
+.clk-side button{font-size:14px;padding:0 9px;line-height:1.35;white-space:nowrap}
+.clk-side button.on{background:var(--acc);box-shadow:0 0 0 var(--line);transform:translate(1px,1px)}
+.clk-ctl{display:flex;flex-direction:column;gap:4px;justify-content:center}
+.clk-ctl .row{gap:4px;flex-wrap:nowrap}
+.clk-ctl button{font-size:14px;padding:0 9px;line-height:1.35}
+.clk-ctl input{width:3.6rem;font-size:15px;padding:1px 4px}
+/* Saved notes */
+.nbtns{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0}
+.nlist{max-height:190px;overflow-y:auto;display:flex;flex-direction:column;gap:5px;padding:2px 4px 2px 0;background:none}
+.nitem{display:flex;gap:6px;align-items:flex-start;background:rgba(255,255,255,.8);border:1.5px solid rgba(59,54,86,.4);border-radius:8px 5px 9px 6px/6px 9px 5px 8px;padding:3px 6px;cursor:pointer;line-height:1.25}
+.nitem:hover{background:#fff}
+.nitem.cur{border-color:var(--line);background:var(--yel)}
+.nitem .nt{flex:1;min-width:0;font-size:15px}
+.nitem .nt b{display:block;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nitem .nt span{display:block;font-size:13px;opacity:.7;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.nitem .nx{border:0;box-shadow:none;background:none;padding:0 4px;opacity:.55;font-size:15px}
+.nitem .nx:hover{opacity:1;background:none}
+a.tab{display:inline-block;text-decoration:none;color:var(--ink);background:var(--paper);border:2px solid var(--line);border-radius:9px 5px 10px 6px/6px 10px 5px 9px;box-shadow:2px 2px 0 var(--line);cursor:pointer}
+a.tab:hover{background:#fff}
+a.tab:active{transform:translate(2px,2px);box-shadow:0 0 0 var(--line)}
+a.tab:focus-visible{outline:3px solid var(--blu);outline-offset:2px}
+
 @media(max-width:860px){.home{grid-template-columns:1fr}.board{grid-template-columns:1fr}td.lab{width:64px}}
 @media print{
+ .clockbox{display:none!important}
  @page{size:A4 landscape;margin:8mm}
  body{background:#fff;padding:0}.card{box-shadow:none;background:#fff}
  button.sw,.noprint,.tabs{display:none!important}
@@ -15376,6 +15420,7 @@ textarea.det:focus{background:#fff;border-color:var(--blu)}
 <nav class="tabs noprint" role="tablist" aria-label="Planner views">
  <button class="tab" role="tab" id="tab-home" data-a="view" data-v="home">My day</button>
  <button class="tab" role="tab" id="tab-week" data-a="view" data-v="week">Weekly planner</button>
+ <a class="tab" id="tab-plans" href="https://aurabotsubjects.github.io/LessonPlans/" target="_blank" rel="noopener noreferrer">Lesson Plans</a>
 </nav>
 
 <div class="home" id="home">
@@ -15391,7 +15436,10 @@ textarea.det:focus{background:#fff;border-color:var(--blu)}
  <section class="card yel"><h2>This week’s tasks</h2><div class="ring" id="ring"></div></section>
  <section class="card grid"><h2>Report comments</h2><div class="row"><button data-a="r-" aria-label="One fewer">−</button><span id="rep" style="font-size:1.5rem"></span><button data-a="r+" aria-label="One more">+</button></div>
   <div class="row small" style="margin-top:6px">Class size <input id="rn" type="number" min="1" max="40" style="width:64px"></div></section>
- <section class="card lined"><h2>Field notes</h2><textarea id="notes" aria-label="Notes" placeholder="Reminders, ideas, things to tell the office…"></textarea></section>
+ <section class="card lined"><h2>Field notes</h2><textarea id="notes" aria-label="Notes" placeholder="Reminders, ideas, things to tell the office…"></textarea>
+  <div class="nbtns noprint"><button class="pri" data-a="n-save" id="nSave">Save note</button><button data-a="n-new">New note</button><span class="small" id="nStat"></span></div>
+  <div class="small" style="margin-top:4px">Saved notes <span id="nCount"></span></div>
+  <div class="nlist" id="nlist" role="list" aria-label="Saved notes"></div></section>
 </div>
 </div>
 
@@ -15490,7 +15538,8 @@ const unlocked=new Set(),expanded=new Set();let openPick=null,M=null,dupData=nul
 /* ---------- Home view (original planner) ---------- */
 function head(){const wk=Math.floor((now-new Date(S.term+'T00:00'))/6048e5)+1;
 $('#top').innerHTML=`<div><h1>Kia ora! ${now.toLocaleDateString('en-NZ',{weekday:'long',day:'numeric',month:'long'})}</h1><div class="row small">${wk>=1&&wk<=14?'Week '+wk+' of term · ':''}term started <input type="date" id="term" value="${S.term}" aria-label="Term start date"></div></div>
-<div class="row noprint" role="group" aria-label="Accent colour">${ACC.map(c=>`<button class="sw ${c==S.acc?'on':''}" data-a="acc" data-v="${c}" style="background:${c}" aria-label="Colour ${c}"></button>`).join('')}</div>`;}
+<div class="clockbox noprint" id="clockbox" role="group" aria-label="Clock"><div class="clk-main"><div class="clk-time" id="clkTime" aria-live="off"></div><div class="clk-sub" id="clkSub"></div></div><div class="clk-ctl" id="clkCtl"></div><div class="clk-side" id="clkSide"></div></div>
+<div class="row noprint" role="group" aria-label="Accent colour">${ACC.map(c=>`<button class="sw ${c==S.acc?'on':''}" data-a="acc" data-v="${c}" style="background:${c}" aria-label="Colour ${c}"></button>`).join('')}</div>`;if(typeof clkBuild==='function')clkBuild();}
 function tt(){const dow=now.getDay()-1;let h='<table><tr><th></th>'+DAYS.map((d,i)=>`<th class="${i==dow?'today':''}">${d}</th>`).join('')+'</tr>';
 S.rows.forEach((r,ri)=>{h+=`<tr><td class="lab"><input data-r="${ri}" value="${esc(r)}" aria-label="Row name"></td>`+DAYS.map((d,i)=>`<td class="${i==dow?'today':''}"><input data-k="${i}-${ri}" value="${esc(S.tt[i+'-'+ri]||'')}" placeholder="·" aria-label="${d} ${esc(r)}"></td>`).join('')+'</tr>'});
 $('#tt').innerHTML=h+'</table>';}
@@ -15507,11 +15556,27 @@ function rep(){$('#rep').textContent=S.rep.d+' / '+S.rep.n+' written';$('#rn').v
 function addTask(){const v=$('#nt').value.trim();if(!v){$('#nt').focus();return}S.tasks.push({id:Date.now(),t:v,tag:$('#ntag').value,c:0});$('#nt').value='';save();board();}
 function addEv(){const i=$('#ne'),v=i.value.trim();if(!v)return i.focus();(S.ev[sel]=S.ev[sel]||[]).push(v);save();cal();$('#ne').focus();}
 
-/* Today's lessons, pulled from the weekly planner */
+/* Today's lessons, pulled from the weekly planner. Click a lesson to expand its summary; only one can be open at a time. */
+let openLesson=null;
+function lessonSummary(x){
+ const parts=[];
+ const sum=SUM_FIELDS.map(f=>x[f]).find(Boolean);
+ if(sum)parts.push(esc(sum));
+ if(x.memoryVerseLabel)parts.push(`<span class="lt">Memory verse:</span> ${esc(x.memoryVerseLabel)}${x.memoryVerseText?' — '+esc(x.memoryVerseText):''}`);
+ if(x.weeklyWonderLabel)parts.push(`<span class="lt">Weekly Wonder:</span> ${esc(x.weeklyWonderLabel)}`);
+ if(x.details&&String(x.details).trim())parts.push(`<span class="lt">Notes:</span> ${esc(x.details)}`);
+ return parts.length?parts.join('<br><br>'):null}
 function todayCard(){const dow=now.getDay()-1,wkend=dow<0||dow>4,day=WDAYS[wkend?0:dow];
  const l=lessons.filter(x=>x.day===day&&!['Pack Up','Home'].includes(x.topic)).sort((a,b)=>timeToMins(a.startTime)-timeToMins(b.startTime));
+ if(openLesson&&!l.some(x=>x.id===openLesson))openLesson=null;
  $('#todayCard').innerHTML=`<div class="row" style="justify-content:space-between"><h2 style="margin:0">${wkend?'Monday’s lessons':'Today’s lessons'}</h2><button data-a="view" data-v="week">Open weekly planner</button></div>`+
- (l.length?`<div class="lesson-list" style="margin-top:8px">${l.map(x=>{const lab=LABEL_FIELDS.map(f=>x[f]).find(Boolean);return`<div class="lrow" style="background:${getTopicColor(x.topic)}"><span class="tm">${minsToTime(timeToMins(x.startTime)).replace(':00','')}</span><b>${esc(x.topic)}</b>${lab?`<span class="lb">${esc(lab)}</span>`:''}</div>`}).join('')}</div>`:'<p class="small">Nothing planned for this day yet.</p>');}
+ (l.length?`<div class="lesson-list" style="margin-top:8px">${l.map(x=>{const lab=LABEL_FIELDS.map(f=>x[f]).find(Boolean),open=openLesson===x.id,sm=open?lessonSummary(x):null;
+  return`<div class="lrow acc${open?' open':''}" style="background:${getTopicColor(x.topic)}"><button class="lhead" data-a="lopen" data-id="${esc(x.id)}" aria-expanded="${open}" aria-controls="ls-${esc(x.id)}"><span class="tm">${minsToTime(timeToMins(x.startTime)).replace(':00','')}</span><b>${esc(x.topic)}</b>${lab?`<span class="lb">${esc(lab)}</span>`:'<span class="lb"></span>'}<span class="arr" aria-hidden="true">▼</span></button>${open?`<div class="lsum${sm?'':' none'}" id="ls-${esc(x.id)}">${sm||'No lesson summary has been added to this block yet.'}</div>`:''}</div>`}).join('')}</div>`:'<p class="small">Nothing planned for this day yet.</p>');}
+function toggleLesson(id){
+ if(openLesson===id)openLesson=null;
+ else if(openLesson){toast('Close the open lesson first.');return}
+ else openLesson=id;
+ todayCard()}
 
 /* ---------- Lesson-plan pickers (shared by every subject) ---------- */
 function resolve(s,sel){const lists=[],items=[];let list=s.data()[s.lv[0].k]||[];
@@ -15657,6 +15722,7 @@ function copyTable(){
 function setView(v){S.view=v;$('#home').hidden=v!=='home';$('#week').hidden=v!=='week';
  $('#tab-home').setAttribute('aria-selected',v==='home');$('#tab-week').setAttribute('aria-selected',v==='week');save();if(v==='week')renderBoard()}
 const A={
+lopen:e=>toggleLesson(e.dataset.id),'n-save':saveNote,'n-new':newNote,'n-open':e=>openNote(e.dataset.id),'n-del':e=>delNote(e.dataset.id),'clk-mode':e=>setClkMode(e.dataset.v),'clk-go':clkGo,'clk-reset':clkReset,
 add:addTask,aev:addEv,view:e=>setView(e.dataset.v),
 mv:e=>{const t=S.tasks.find(t=>t.id==e.dataset.id);t.c=(t.c+1)%3;save();board()},
 del:e=>{S.tasks=S.tasks.filter(t=>t.id!=e.dataset.id);save();board()},
@@ -15706,8 +15772,72 @@ document.addEventListener('input',ev=>{const t=ev.target;
 $('#f').addEventListener('change',e=>{const r=new FileReader();r.onload=()=>{try{loadAny(JSON.parse(r.result));toast('Backup loaded.')}catch(x){toast('That file isn’t a planner backup.')}};if(e.target.files[0])r.readAsText(e.target.files[0]);e.target.value=''});
 $('#wf').addEventListener('change',e=>{const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!Array.isArray(d))throw 0;lessons=d;save();init();toast('Template loaded.')}catch(x){toast('That isn’t a weekly template file.')}};if(e.target.files[0])r.readAsText(e.target.files[0]);e.target.value=''});
 window.addEventListener('beforeprint',prepareForExport);window.addEventListener('afterprint',()=>renderBoard());
+
+/* ---------- Saved notes (kept in this browser's localStorage, inside the planner's save) ---------- */
+S.noteList=Array.isArray(S.noteList)?S.noteList:[];
+let curNote=null;
+const noteTitle=t=>{const f=String(t).trim().split('\n')[0];return f.length>60?f.slice(0,60)+'…':f};
+const noteWhen=ts=>new Date(ts).toLocaleString('en-NZ',{day:'numeric',month:'short',hour:'numeric',minute:'2-digit'});
+function notesList(){
+ if(!Array.isArray(S.noteList))S.noteList=[];
+ const L=S.noteList.slice().sort((a,b)=>b.ts-a.ts);
+ $('#nCount').textContent=L.length?'('+L.length+')':'';
+ $('#nlist').innerHTML=L.length?L.map(n=>`<div class="nitem${n.id===curNote?' cur':''}" role="listitem" data-a="n-open" data-id="${esc(n.id)}" tabindex="0"><div class="nt"><b>${esc(noteTitle(n.text)||'(empty)')}</b><span>${esc(noteWhen(n.ts))}</span></div><button class="nx" data-a="n-del" data-id="${esc(n.id)}" aria-label="Delete note" title="Delete">✕</button></div>`).join(''):'<div class="small">No saved notes yet. Type above and press “Save note”.</div>';
+ $('#nSave').textContent=curNote?'Update note':'Save note';
+ $('#nStat').textContent=curNote?'Editing a saved note':''}
+function saveNote(){const t=$('#notes').value;if(!t.trim()){toast('Type something first.');$('#notes').focus();return}
+ const ex=curNote&&S.noteList.find(n=>n.id===curNote);
+ if(ex){ex.text=t;ex.ts=Date.now()}else{const n={id:uid(),text:t,ts:Date.now()};S.noteList.push(n);curNote=n.id}
+ save();notesList();toast('Note saved.')}
+function newNote(){curNote=null;$('#notes').value='';S.notes='';save();notesList();$('#notes').focus()}
+function openNote(id){const n=S.noteList.find(x=>x.id===id);if(!n)return;curNote=id;$('#notes').value=n.text;S.notes=n.text;save();notesList()}
+function delNote(id){const n=S.noteList.find(x=>x.id===id);if(!n)return;if(!confirm('Delete this saved note?'))return;
+ S.noteList=S.noteList.filter(x=>x.id!==id);if(curNote===id)curNote=null;save();notesList()}
+$('#nlist').addEventListener('keydown',ev=>{const it=ev.target.closest('.nitem');if(it&&ev.target===it&&(ev.key==='Enter'||ev.key===' ')){ev.preventDefault();openNote(it.dataset.id)}});
+
+/* ---------- Clock / countdown / stopwatch ---------- */
+const CK={mode:'clock',cd:{min:5,left:300000,run:false,end:0,done:false},sw:{ms:0,run:false,start:0}};
+const pad=n=>String(n).padStart(2,'0');
+function fmtMs(ms,tenths){const t=Math.max(0,ms),h=Math.floor(t/36e5),m=Math.floor(t/6e4)%60,s=Math.floor(t/1e3)%60;
+ return(h?h+':':'')+pad(m)+':'+pad(s)+(tenths?'.'+Math.floor(t%1000/100):'')}
+function beep(){try{const C=window.AudioContext||window.webkitAudioContext,c=new C();[0,.3,.6].forEach(d=>{const o=c.createOscillator(),g=c.createGain();o.frequency.value=880;g.gain.value=.15;o.connect(g);g.connect(c.destination);o.start(c.currentTime+d);o.stop(c.currentTime+d+.18)})}catch(e){}}
+function clkBuild(){
+ const side=$('#clkSide');if(!side)return;
+ side.innerHTML=[['clock','🕒 Clock'],['cd','⏳ Countdown'],['sw','⏱ Stopwatch']].map(([k,l])=>`<button data-a="clk-mode" data-v="${k}" class="${CK.mode===k?'on':''}" aria-pressed="${CK.mode===k}">${l}</button>`).join('');
+ const ctl=$('#clkCtl');
+ if(CK.mode==='clock')ctl.innerHTML='';
+ else if(CK.mode==='cd')ctl.innerHTML=`<div class="row"><input type="number" id="cdMin" min="1" max="600" value="${CK.cd.min}" aria-label="Countdown minutes" ${CK.cd.run?'disabled':''}><span class="small">min</span></div><div class="row"><button class="pri" data-a="clk-go" id="clkGo"></button><button data-a="clk-reset">Reset</button></div>`;
+ else ctl.innerHTML=`<div class="row"><button class="pri" data-a="clk-go" id="clkGo"></button><button data-a="clk-reset">Reset</button></div>`;
+ clkTick()}
+function clkTick(){
+ const el=$('#clkTime');if(!el)return;const n=new Date(),go=$('#clkGo');let txt,sub='',done=false;
+ if(CK.mode==='clock'){let h=n.getHours();const ap=h>=12?'PM':'AM';h=h%12||12;txt=h+':'+pad(n.getMinutes())+':'+pad(n.getSeconds());sub=ap+' · '+n.toLocaleDateString('en-NZ',{weekday:'short',day:'numeric',month:'short'})}
+ else if(CK.mode==='cd'){const c=CK.cd;
+  if(c.run){c.left=c.end-Date.now();if(c.left<=0){c.left=0;c.run=false;c.done=true;beep();toast('Countdown finished!');clkBuild();return}}
+  txt=fmtMs(Math.ceil(c.left/1000)*1000);sub=c.done?'Time’s up!':c.run?'Counting down':'Countdown';done=c.done;
+  if(go)go.textContent=c.run?'Pause':(c.left<c.min*60000&&c.left>0?'Resume':'Start')}
+ else{const w=CK.sw;const ms=w.run?w.ms+(Date.now()-w.start):w.ms;txt=fmtMs(ms,true);sub=w.run?'Running':'Stopwatch';
+  if(go)go.textContent=w.run?'Pause':(w.ms>0?'Resume':'Start')}
+ el.textContent=txt;el.classList.toggle('done',done);$('#clkSub').textContent=sub;
+ document.title=CK.mode==='clock'?'Teacher planner':txt+' · Teacher planner'}
+function setClkMode(m){CK.mode=m;CK.cd.done=false;clkBuild()}
+function clkGo(){
+ if(CK.mode==='cd'){const c=CK.cd;
+  if(c.run){c.left=c.end-Date.now();c.run=false}
+  else{if(c.done||c.left<=0){c.done=false;c.left=c.min*60000}
+   if(c.left===c.min*60000||!c.left){const v=Math.max(1,Math.min(600,+($('#cdMin')?.value)||c.min));c.min=v;c.left=v*60000}
+   c.done=false;c.end=Date.now()+c.left;c.run=true}}
+ else if(CK.mode==='sw'){const w=CK.sw;if(w.run){w.ms+=Date.now()-w.start;w.run=false}else{w.start=Date.now();w.run=true}}
+ clkBuild()}
+function clkReset(){
+ if(CK.mode==='cd'){const v=Math.max(1,Math.min(600,+($('#cdMin')?.value)||CK.cd.min));CK.cd={min:v,left:v*6e4,run:false,end:0,done:false}}
+ else if(CK.mode==='sw')CK.sw={ms:0,run:false,start:0};
+ clkBuild()}
+document.addEventListener('input',ev=>{if(ev.target.id==='cdMin'&&!CK.cd.run){const v=Math.max(1,Math.min(600,+ev.target.value||1));CK.cd.min=v;CK.cd.left=v*6e4;CK.cd.done=false;clkTick()}});
+setInterval(clkTick,100);
+
 function init(){document.documentElement.style.setProperty('--acc',S.acc);$('#ntag').innerHTML=Object.keys(TAGS).map(t=>`<option>${t}</option>`).join('');$('#notes').value=S.notes;
  $('#wkGrid').style.gridTemplateRows=`repeat(${TOTAL},2px)`;
- head();tt();board();cal();rep();todayCard();setView(S.view==='week'?'week':'home');renderBoard()}
+ head();clkBuild();tt();board();cal();rep();todayCard();notesList();setView(S.view==='week'?'week':'home');renderBoard()}
 init();
 </script></body></html>
