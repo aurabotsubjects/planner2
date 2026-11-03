@@ -15437,9 +15437,38 @@ a.tab:focus-visible{outline:3px solid var(--blu);outline-offset:2px}
 .prog .pbar i{display:block;height:100%;background:#7fdca0}
 .prog .pv{width:3.2rem;text-align:right;font-size:14px}
 
+.cls{border:2px solid var(--line);border-radius:10px 6px 11px 7px/7px 11px 6px 10px;background:rgba(255,255,255,.55);margin-bottom:10px}
+.cls-h{display:flex;gap:8px;align-items:center;padding:4px 8px}
+.cls-t{flex:1;min-width:0;display:flex;gap:10px;align-items:center;text-align:left;border:0;box-shadow:none;background:none;padding:2px 0;font-size:1.2rem}
+.cls-t:hover,.cls-t:active{background:none;transform:none;box-shadow:none}
+.cls-t .arr{font-size:13px;transition:transform .2s;display:inline-block;transform:rotate(-90deg)}
+.cls.open .cls-t .arr{transform:none}
+.cls-t .cnt{font-size:14px;opacity:.65}
+.cls-b{border-top:1.5px dashed rgba(59,54,86,.4);padding:8px 10px 3px}
+.pp{background:rgba(255,255,255,.85);border:2px dashed var(--line);border-radius:10px;padding:8px 10px;margin:6px 0;display:flex;flex-direction:column;gap:3px}
+.pr{display:flex;gap:6px;align-items:center;font-size:16px;cursor:pointer}
+.pr input{width:18px;height:18px;accent-color:#3b9b6b}
+.pr-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 12px;padding-left:10px}
+#printArea{display:none}
+
 @media(max-width:860px){.home{grid-template-columns:1fr}.board{grid-template-columns:1fr}td.lab{width:64px}}
 @media print{
  .clockbox{display:none!important}
+
+ @page stuprint{size:A4 portrait;margin:14mm}
+ body.pstu .wrap,body.pstu .ov,body.pstu .toast{display:none!important}
+ body.pstu{background:#fff!important;padding:0}
+ body.pstu #printArea{display:block;page:stuprint;font:12pt/1.4 Georgia,serif;color:#000}
+ #printArea .pm{color:#444;margin-bottom:8px;font-size:11pt}
+ #printArea .ph{font-family:Georgia,serif;font-size:16pt;border-bottom:1.5px solid #000;margin:16px 0 6px;break-after:avoid}
+ #printArea .pn{border-bottom:1px dotted #999;padding:4px 0;white-space:pre-wrap;break-inside:avoid}
+ #printArea .pd{font-size:9.5pt;color:#555}
+ #printArea .ps{font-weight:bold;margin:8px 0 2px;break-after:avoid}
+ #printArea .pi{display:flex;gap:8px;padding:1.5px 0;break-inside:avoid}
+ #printArea .bx{font-size:13pt;line-height:1.1}
+ #printArea .pg{display:grid;grid-template-columns:12rem 1fr 4rem;gap:8px;align-items:center;margin:3px 0}
+ #printArea .pb{height:10px;border:1px solid #000;display:block}
+ #printArea .pb i{display:block;height:100%;background:#777}
  @page{size:A4 landscape;margin:8mm}
  body{background:#fff;padding:0}.card{box-shadow:none;background:#fff}
  button.sw,.noprint,.tabs{display:none!important}
@@ -15511,6 +15540,7 @@ a.tab:focus-visible{outline:3px solid var(--blu);outline-offset:2px}
  <div class="row" style="justify-content:flex-end;margin-top:14px"><button data-a="s-close">Cancel</button><button class="pri" data-a="s-ok">Save</button></div>
 </div></div>
 <div class="ov noprint" id="stuModal" hidden><div class="card" role="dialog" aria-modal="true" aria-labelledby="stuTitle"><div id="stuBody"></div></div></div>
+<div id="printArea"></div>
 <div class="toast noprint" id="toast" role="status" hidden></div>
 
 <script>
@@ -15758,7 +15788,7 @@ function copyTable(){
 function setView(v){S.view=v;$('#home').hidden=v!=='home';$('#week').hidden=v!=='week';
  $('#tab-home').setAttribute('aria-selected',v==='home');$('#tab-week').setAttribute('aria-selected',v==='week');save();if(v==='week')renderBoard()}
 const A={
-'c-sel':e=>{S.curClass=e.dataset.id;openStu=composeStu=null;save();classCard()},'c-add':addClass,'c-del':delClass,'s-add':addStudent,'s-del':e=>delStudent(e.dataset.id),'s-prof':e=>openStuModal(e.dataset.id),'sn-add':e=>openStuModal(e.dataset.id,'note'),'s-check':e=>openStuModal(e.dataset.id,'check'),'sm-close':closeStuModal,'sm-note':saveModalNote,'sm-notedel':e=>{if(!confirm('Delete this note?'))return;const st=stuOf(mStu);st.notes=st.notes.filter(n=>n.id!==e.dataset.n);save();smNotes()},'sm-clear':()=>{const st=stuOf(mStu),c=CURRIC.find(x=>x.id===mCur);if(!st||!c||!confirm('Clear every tick on '+c.name+' for '+st.name+'?'))return;Object.keys(st.checks||{}).filter(k=>k.startsWith(c.id+':')).forEach(k=>delete st.checks[k]);save();smCheck();smProg()},'sm-goto':e=>{mCur=e.dataset.id;$('#smCur').value=mCur;smCheck();$('#smCur').scrollIntoView({block:'start'})},
+'c-tog':e=>{const id=e.dataset.id;openCls.has(id)?openCls.delete(id):openCls.add(id);classCard()},'c-add':addClass,'c-del':e=>delClass(e.dataset.id),'s-add':e=>addStudent(e.dataset.id),'sm-print':smPrintPanel,'sm-doprint':doStuPrint,'s-del':e=>delStudent(e.dataset.id),'s-prof':e=>openStuModal(e.dataset.id),'sn-add':e=>openStuModal(e.dataset.id,'note'),'s-check':e=>openStuModal(e.dataset.id,'check'),'sm-close':closeStuModal,'sm-note':saveModalNote,'sm-notedel':e=>{if(!confirm('Delete this note?'))return;const st=stuOf(mStu);st.notes=st.notes.filter(n=>n.id!==e.dataset.n);save();smNotes()},'sm-clear':()=>{const st=stuOf(mStu),c=CURRIC.find(x=>x.id===mCur);if(!st||!c||!confirm('Clear every tick on '+c.name+' for '+st.name+'?'))return;Object.keys(st.checks||{}).filter(k=>k.startsWith(c.id+':')).forEach(k=>delete st.checks[k]);save();smCheck();smProg()},'sm-goto':e=>{mCur=e.dataset.id;$('#smCur').value=mCur;smCheck();$('#smCur').scrollIntoView({block:'start'})},
 add:addTask,aev:addEv,view:e=>setView(e.dataset.v),
 mv:e=>{const t=S.tasks.find(t=>t.id==e.dataset.id);t.c=(t.c+1)%3;save();board()},
 del:e=>{S.tasks=S.tasks.filter(t=>t.id!=e.dataset.id);save();board()},
@@ -15902,29 +15932,31 @@ const stuWhen=ts=>new Date(ts).toLocaleString('en-NZ',{weekday:'short',day:'nume
 const stuOf=id=>{for(const c of S.classes){const x=c.students.find(y=>y.id===id);if(x)return x}return null};
 const stuClass=id=>S.classes.find(c=>c.students.some(y=>y.id===id));
 const ticks=st=>Object.values(st.checks||{}).filter(Boolean).length;
-function classCard(){const el=$('#classCard');if(!el)return;const c=curCls();if(c)S.curClass=c.id;
- let h=`<h2>Classes</h2><div class="cls-tabs">${S.classes.map(x=>`<button data-a="c-sel" data-id="${esc(x.id)}" class="${c&&x.id===c.id?'on':''}">${esc(x.name)}</button>`).join('')}</div>
- <div class="row" style="margin-bottom:8px"><input id="ncls" placeholder="New class, e.g. Room 12" style="flex:1;min-width:140px" aria-label="New class name"><button class="pri" data-a="c-add">Add class</button></div>`;
- if(!c)h+='<p class="small">No classes yet. Add one above, then add your students.</p>';
- else{h+=`<div class="row" style="justify-content:space-between;margin-bottom:8px"><b style="font-size:1.15rem">${esc(c.name)} <span class="small">· ${c.students.length} student${c.students.length===1?'':'s'}</span></b><button class="mini" data-a="c-del">Delete class</button></div>
- <div class="row" style="margin-bottom:10px"><input id="nstu" placeholder="Add a student's name" style="flex:1;min-width:140px" aria-label="New student name"><button class="pri" data-a="s-add">Add student</button></div>`;
-  h+=c.students.length?c.students.map(st=>{const nn=(st.notes||[]).length,tk=ticks(st);
-   return`<div class="stu"><div class="stu-h"><button class="stu-n" data-a="s-prof" data-id="${esc(st.id)}" title="Open ${esc(st.name)}'s page"><b>${esc(st.name)}</b><span class="cnt">${nn} note${nn===1?'':'s'}${tk?' · '+tk+' ticked':''}</span></button><button class="mini pri" data-a="sn-add" data-id="${esc(st.id)}">+ Note</button><button class="mini" data-a="s-check" data-id="${esc(st.id)}">✔ Checklist</button><button class="xb" data-a="s-del" data-id="${esc(st.id)}" aria-label="Delete ${esc(st.name)}" title="Delete student">✕</button></div></div>`}).join(''):'<p class="small">No students in this class yet.</p>'}
+const openCls=new Set();let clsInit=false;
+function classCard(){const el=$('#classCard');if(!el)return;
+ if(!clsInit){clsInit=true;if(S.classes[0])openCls.add(S.classes[0].id)}
+ let h=`<h2>Classes</h2><div class="row" style="margin-bottom:10px"><input id="ncls" placeholder="New class, e.g. Room 12" style="flex:1;min-width:140px" aria-label="New class name"><button class="pri" data-a="c-add">Add class</button></div>`;
+ if(!S.classes.length)h+='<p class="small">No classes yet. Add one above, then add your students.</p>';
+ h+=S.classes.map(c=>{const open=openCls.has(c.id),n=c.students.length;
+  return`<div class="cls${open?' open':''}"><div class="cls-h"><button class="cls-t" data-a="c-tog" data-id="${esc(c.id)}" aria-expanded="${open}"><span class="arr" aria-hidden="true">▼</span><b>${esc(c.name)}</b><span class="cnt">${n} student${n===1?'':'s'}</span></button><button class="mini" data-a="c-del" data-id="${esc(c.id)}">Delete class</button></div>`+
+  (open?`<div class="cls-b"><div class="row" style="margin-bottom:10px"><input id="nstu-${esc(c.id)}" data-cid="${esc(c.id)}" placeholder="Add a student's name" style="flex:1;min-width:140px" aria-label="New student name"><button class="pri" data-a="s-add" data-id="${esc(c.id)}">Add student</button></div>`+
+  (n?c.students.map(st=>{const nn=(st.notes||[]).length,tk=ticks(st);
+   return`<div class="stu"><div class="stu-h"><button class="stu-n" data-a="s-prof" data-id="${esc(st.id)}" title="Open ${esc(st.name)}'s page"><b>${esc(st.name)}</b><span class="cnt">${nn} note${nn===1?'':'s'}${tk?' · '+tk+' ticked':''}</span></button><button class="mini pri" data-a="sn-add" data-id="${esc(st.id)}">+ Note</button><button class="mini" data-a="s-check" data-id="${esc(st.id)}">✔ Checklist</button><button class="xb" data-a="s-del" data-id="${esc(st.id)}" aria-label="Delete ${esc(st.name)}" title="Delete student">✕</button></div></div>`}).join(''):'<p class="small">No students in this class yet.</p>')+'</div>':'')+'</div>'}).join('');
  el.innerHTML=h}
 function addClass(){const i=$('#ncls'),v=i.value.trim();if(!v){i.focus();return}
- const c={id:uid(),name:v,students:[]};S.classes.push(c);S.curClass=c.id;save();classCard();$('#nstu')?.focus()}
-function delClass(){const c=curCls();if(!c)return;
+ const c={id:uid(),name:v,students:[]};S.classes.push(c);openCls.add(c.id);save();classCard();document.getElementById('nstu-'+c.id)?.focus()}
+function delClass(id){const c=S.classes.find(x=>x.id===id);if(!c)return;
  if(!confirm(`Delete the class "${c.name}", all its students and their notes? This can't be undone.`))return;
- S.classes=S.classes.filter(x=>x.id!==c.id);S.curClass=S.classes[0]?.id||null;save();classCard()}
-function addStudent(){const c=curCls(),i=$('#nstu'),v=i.value.trim();if(!c)return;if(!v){i.focus();return}
- c.students.push({id:uid(),name:v,notes:[],checks:{}});save();classCard();$('#nstu').focus()}
+ S.classes=S.classes.filter(x=>x.id!==id);openCls.delete(id);save();classCard()}
+function addStudent(cid){const c=S.classes.find(x=>x.id===cid),i=document.getElementById('nstu-'+cid);if(!c||!i)return;const v=i.value.trim();if(!v){i.focus();return}
+ c.students.push({id:uid(),name:v,notes:[],checks:{}});save();classCard();document.getElementById('nstu-'+cid)?.focus()}
 function delStudent(id){const st=stuOf(id);if(!st)return;
  if(!confirm(`Delete ${st.name} and all their notes and checklists? This can't be undone.`))return;
  const c=stuClass(id);c.students=c.students.filter(x=>x.id!==id);save();classCard()}
 
 /* Student pop-up page */
 function openStuModal(id,focus){const st=stuOf(id);if(!st)return;mStu=id;
- $('#stuBody').innerHTML=`<div class="row" style="justify-content:space-between;flex-wrap:nowrap"><h3 id="stuTitle" style="margin:0">${esc(st.name)}</h3><button data-a="sm-close">Close ✕</button></div><div class="small" style="margin-bottom:6px">Class: ${esc(stuClass(id)?.name||'')}</div>
+ $('#stuBody').innerHTML=`<div class="row" style="justify-content:space-between;flex-wrap:nowrap"><h3 id="stuTitle" style="margin:0">${esc(st.name)}</h3><span class="row" style="flex-wrap:nowrap"><button data-a="sm-print">🖨 Print…</button><button data-a="sm-close">Close ✕</button></span></div><div id="smPrint" hidden></div><div class="small" style="margin-bottom:6px">Class: ${esc(stuClass(id)?.name||'')}</div>
  <div class="sm-sec"><h4>Notes</h4><textarea id="smTxt" placeholder="Write a note about ${esc(st.name)}…" aria-label="New note"></textarea><div class="row" style="margin:6px 0"><button class="pri" data-a="sm-note">+ Save note</button><span class="small">Ctrl+Enter also saves</span></div><div id="smNotes"></div></div>
  <div class="sm-sec"><h4>Curriculum checklist</h4><div class="row"><select id="smCur" aria-label="Choose curriculum" style="flex:1;min-width:180px">${['Maths','English'].map(g=>`<optgroup label="${g}">${CURRIC.filter(c=>c.sub===g).map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('')}</optgroup>`).join('')}</select></div><div id="smCheck"></div></div>
  <div class="sm-sec"><h4>Progress overview</h4><div id="smProg"></div></div>`;
@@ -15947,10 +15979,35 @@ document.addEventListener('change',ev=>{const t=ev.target;
  if(t.id==='smCur'){mCur=t.value;smCheck()}
  else if(t.dataset?.ch==='chk'){const st=stuOf(mStu);if(!st)return;st.checks=st.checks||{};if(t.checked)st.checks[t.dataset.k]=true;else delete st.checks[t.dataset.k];save();smCounts();smProg()}});
 document.addEventListener('keydown',ev=>{const t=ev.target;
- if(ev.key==='Enter'&&t.id==='ncls')addClass();else if(ev.key==='Enter'&&t.id==='nstu')addStudent();
+ if(ev.key==='Enter'&&t.id==='ncls')addClass();else if(ev.key==='Enter'&&t.dataset?.cid)addStudent(t.dataset.cid);
  else if(ev.key==='Enter'&&(ev.ctrlKey||ev.metaKey)&&t.id==='smTxt')saveModalNote();
  else if(ev.key==='Escape'&&mStu){mStu=null;classCard()}});
 $('#stuModal').addEventListener('click',ev=>{if(ev.target.id==='stuModal')closeStuModal()});
+
+/* Print a student's page (choose what to include) */
+function smPrintPanel(){const st=stuOf(mStu),el=$('#smPrint');if(!st||!el)return;
+ if(!el.hidden){el.hidden=true;return}
+ const any=CURRIC.filter(c=>curDone(st,c)>0).map(c=>c.id);const pre=any.length?any:[mCur];
+ el.innerHTML=`<div class="pp"><b>What do you want to print?</b>
+ <label class="pr"><input type="checkbox" id="pr-notes" checked> Saved notes (${(st.notes||[]).length})</label>
+ <label class="pr"><input type="checkbox" id="pr-prog"> Progress overview (summary bars)</label>
+ <div class="pr"><b style="font-weight:700">Checklists</b> <span class="small">(tick the ones to print)</span></div>
+ <div class="pr-grid">${CURRIC.map(c=>`<label class="pr"><input type="checkbox" id="pr-c-${c.id}"${pre.includes(c.id)&&(any.length||false)||(!any.length&&c.id===mCur&&false)?' checked':''}> ${esc(c.name)} <span class="small">(${curDone(st,c)}/${curTotal(c)})</span></label>`).join('')}</div>
+ <label class="pr"><input type="checkbox" id="pr-only"> Only list items that are ticked</label>
+ <div class="row" style="margin-top:6px"><button class="pri" data-a="sm-doprint">Print</button><button data-a="sm-print">Cancel</button></div></div>`;
+ el.hidden=false}
+function doStuPrint(){const st=stuOf(mStu);if(!st)return;
+ const on=id=>document.getElementById(id)?.checked,only=on('pr-only'),curs=CURRIC.filter(c=>on('pr-c-'+c.id));
+ if(!on('pr-notes')&&!on('pr-prog')&&!curs.length){toast('Choose something to print first.');return}
+ const k=st.checks||{};let h=`<h1 style="font-size:26pt;margin:0">${esc(st.name)}</h1><div class="pm">Class: ${esc(stuClass(st.id)?.name||'')} · Printed ${new Date().toLocaleDateString('en-NZ',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}</div>`;
+ if(on('pr-notes')){const L=(st.notes||[]).slice().sort((a,b)=>a.ts-b.ts);h+=`<h2 class="ph">Notes</h2>`+(L.length?L.map(n=>`<div class="pn"><div class="pd">${esc(stuWhen(n.ts))}</div>${esc(n.text)}</div>`).join(''):'<p>No notes saved.</p>')}
+ if(on('pr-prog'))h+=`<h2 class="ph">Progress overview</h2>`+CURRIC.map(c=>{const d=curDone(st,c),t=curTotal(c);return`<div class="pg"><span>${esc(c.name)}</span><span class="pb"><i style="width:${Math.round(d/t*100)}%"></i></span><span>${d}/${t}</span></div>`}).join('');
+ curs.forEach(c=>{h+=`<h2 class="ph">${esc(c.name)} — ${curDone(st,c)} of ${curTotal(c)} achieved</h2>`;
+  c.strands.forEach((x,si)=>{const items=x.items.map((t,ii)=>({t,ok:!!k[curKey(c,si,ii)]})).filter(i=>!only||i.ok);
+   if(!items.length)return;h+=`<div class="ps">${esc(x.n)}</div>`+items.map(i=>`<div class="pi"><span class="bx">${i.ok?'☑':'☐'}</span>${esc(i.t)}</div>`).join('')})});
+ const pa=$('#printArea');pa.innerHTML=h;document.body.classList.add('pstu');
+ const done=()=>{document.body.classList.remove('pstu');pa.innerHTML='';window.removeEventListener('afterprint',done)};
+ window.addEventListener('afterprint',done);window.print()}
 
 function init(){document.documentElement.style.setProperty('--acc',S.acc);$('#ntag').innerHTML=Object.keys(TAGS).map(t=>`<option>${t}</option>`).join('');$('#notes').value=S.notes;
  $('#wkGrid').style.gridTemplateRows=`repeat(${TOTAL},2px)`;
